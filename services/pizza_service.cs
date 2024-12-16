@@ -18,23 +18,16 @@ public static class PizzaService
 
     public static List<Pizza> GetAll() => Pizzas;
 
-    public static Pizza? GetOne(int id) => Pizzas.Where<Pizza>(pizza => pizza.Id.Equals(id)).FirstOrDefault();
+    public static Pizza? GetById(int id) => Pizzas.Where<Pizza>(pizza => pizza.Id.Equals(id)).FirstOrDefault();
 
 
-    public static void Add(Pizza pizza)
+    public static void Create(Pizza pizza)
     {
         pizza.Id = nextId++;
         Pizzas.Add(pizza);
     }
 
-    public static void Delete(int id)
-    {
-        var pizza = GetOne(id);
-        if (pizza != null)
-            Pizzas.Remove(pizza);
-    }
-
-    public static void Update(Pizza pizza)
+    public static void UpdatePizza(Pizza pizza)
     {
         var index = Pizzas.FindIndex(p => p.Id == pizza.Id);
         if (index == -1)
@@ -42,5 +35,27 @@ public static class PizzaService
 
         Pizzas[index] = pizza;
 
+    }
+
+    public static void UpdateSauce(int id, int sauceId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static void AddTopping(int id, int toppingId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static void DeletePizza(int id)
+    {
+        var pizza = GetById(id);
+        if (pizza != null)
+            Pizzas.Remove(pizza);
+    }
+
+    public static void DeleteById(int id)
+    {
+        throw new NotImplementedException();
     }
 }

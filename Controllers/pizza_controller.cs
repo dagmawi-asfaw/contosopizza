@@ -15,12 +15,12 @@ public class PizzaController : ControllerBase
 
 
     [HttpGet]
-    public ActionResult<List<Pizza>> Get() => PizzaService.GetAll();
+    public ActionResult<List<Pizza>> GetAll() => PizzaService.GetAll();
 
     [HttpGet("{id}")]
-    public ActionResult<Pizza?> Get(int id)
+    public ActionResult<Pizza?> GetById(int id)
     {
-        var pizza = PizzaService.GetOne(id);
+        var pizza = PizzaService.GetById(id);
         if (pizza is null)
             return NotFound();
         return pizza;
@@ -29,8 +29,8 @@ public class PizzaController : ControllerBase
     [HttpPost]
     public IActionResult Create(Pizza pizza)
     {
-        PizzaService.Add(pizza);
-        return CreatedAtAction(nameof(Get), new { id = pizza.Id }, pizza);
+        PizzaService.Create(pizza);
+        return CreatedAtAction(nameof(GetById), new { id = pizza.Id }, pizza);
         // return CreatedAtAction("create pizza", pizza);
     }
 
@@ -40,21 +40,44 @@ public class PizzaController : ControllerBase
         if (pizza.Id != id)
             return BadRequest();
 
-        var existingPizza = PizzaService.GetOne(pizza.Id);
+        var existingPizza = PizzaService.GetById(pizza.Id);
         if (existingPizza is null)
             return NotFound();
-        PizzaService.Update(pizza);
+        PizzaService.UpdatePizza(pizza);
         return NoContent();
     }
+
+
+    public IActionResult AddTopping(int id, int toppingId)
+    {
+        var existingPizza = PizzaService.GetById(id);
+        if (existingPizza is null)
+            return NotFound();
+        PizzaService.AddTopping(id: id, toppingId: toppingId);
+        return NoContent();
+
+    }
+
+
+    public IActionResult UpdateSauce(int id, int sauceId)
+    {
+        var existingPizza = PizzaService.GetById(id);
+        if (existingPizza is null)
+            return NotFound();
+        PizzaService.UpdateSauce(id: id, sauceId: sauceId);
+        return NoContent();
+    }
+
+
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var existingPizza = PizzaService.GetOne(id);
+        var existingPizza = PizzaService.GetById(id);
         if (existingPizza is null)
             return NotFound();
 
-        PizzaService.Delete(id);
+        PizzaService.DeletePizza(id);
 
         return NoContent();
     }
