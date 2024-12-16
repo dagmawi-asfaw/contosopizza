@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace contosopizza.Models;
 /// <summary>
 /// Pizza model
@@ -12,6 +14,8 @@ public class Pizza
     /// <summary>
     /// Name : String
     /// </summary>
+    [Required]
+    [MaxLength(100)]
     public string? Name { get; set; }
 
     /// <summary>

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace contosopizza.Models;
 /// <summary>
 /// Sauce Model
@@ -11,5 +13,12 @@ public class Sauce
     /// <summary>
     /// Name : String?
     /// </summary>
+    [Required]
+    [MaxLength(100)]
     public string? Name { get; set; }
+
+/// <summary>
+/// Is Vegan : bool
+/// </summary>
+    public bool IsVegan { get; set; }
 }

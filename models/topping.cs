@@ -1,3 +1,6 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
+
 namespace contosopizza.Models;
 /// <summary>
 /// Topping Model
@@ -12,5 +15,14 @@ public class Topping
     /// <summary>
     /// Name : String?
     /// </summary>
+    [Required]
+    [MaxLength(100)]
     public string? Name { get; set; }
+
+    /// <summary>
+    /// pizzas that have this topping
+    /// pizzas: Pizza
+    /// </summary>
+    [JsonIgnore]
+    public ICollection<Pizza>? Pizzas { get; set; }
 }
