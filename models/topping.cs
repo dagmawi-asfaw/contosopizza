@@ -18,7 +18,11 @@ public class Topping
     [Required]
     [MaxLength(100)]
     public string? Name { get; set; }
-
+    /// <summary>
+    /// Calories : int
+    /// </summary>
+    [Required]
+    public int Calories { get; set; }
     /// <summary>
     /// pizzas that have this topping
     /// pizzas: Pizza

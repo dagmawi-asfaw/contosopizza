@@ -1,13 +1,14 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
 using contosopizza.Data;
+using contosopizza.Service;
+using contosopizza.data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSqlite<PizzaContext>("Data Source=ContosoPizza.db");
-
-
+builder.Services.AddSqlite<PromotionsContext>("Data Source=promotions/Promotions.db");
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -35,7 +36,12 @@ builder.Services.AddSwaggerGen((options) =>
     options.IncludeXmlComments(xmlPath);
 });
 
+
+builder.Services.AddScoped<PizzaService>();
+
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -51,6 +57,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+//Add the CreateDbIfNotExists method call
+Extentions.CreateDbIfNotExist(app);
 
 app.MapControllers();
 

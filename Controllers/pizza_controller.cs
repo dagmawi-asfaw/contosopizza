@@ -8,9 +8,10 @@ namespace contosopizza.Controllers;
 [Route("[Controller]")]
 public class PizzaController : ControllerBase
 {
-    public PizzaController()
+    private readonly PizzaService service;
+    public PizzaController(PizzaService pizzaService)
     {
-
+        service = pizzaService;
     }
 
     /// <summary>
@@ -18,7 +19,7 @@ public class PizzaController : ControllerBase
     /// </summary>
     [Produces("application/json")]
     [HttpGet]
-    public ActionResult<List<Pizza>> GetAll() => PizzaService.GetAll();
+    public ActionResult<List<Pizza>> GetAll() => service.GetAll();
 
     /// <summary>
     /// Gets one pizza by id
@@ -28,7 +29,7 @@ public class PizzaController : ControllerBase
     [HttpGet("{id}")]
     public ActionResult<Pizza?> GetById(int id)
     {
-        var pizza = PizzaService.GetById(id);
+        var pizza = service.GetById(id);
         if (pizza is null)
             return NotFound();
         return pizza;
@@ -41,7 +42,7 @@ public class PizzaController : ControllerBase
     [HttpPost]
     public IActionResult Create(Pizza pizza)
     {
-        PizzaService.Create(pizza);
+        service.Create(pizza);
         return CreatedAtAction(nameof(GetById), new { id = pizza.Id }, pizza);
         // return CreatedAtAction("create pizza", pizza);
     }
@@ -58,7 +59,7 @@ public class PizzaController : ControllerBase
         if (pizza.Id != id)
             return BadRequest();
 
-        var existingPizza = PizzaService.GetById(pizza.Id);
+        var existingPizza = service.GetById(pizza.Id);
         if (existingPizza is null)
             return NotFound();
         PizzaService.UpdatePizza(pizza);
@@ -74,7 +75,7 @@ public class PizzaController : ControllerBase
     [HttpPut("{id}/topping/{toppingId}")]
     public IActionResult AddTopping(int id, int toppingId)
     {
-        var existingPizza = PizzaService.GetById(id);
+        var existingPizza = service.GetById(id);
         if (existingPizza is null)
             return NotFound();
         //   PizzaService.AddTopping(id: id, toppingId: toppingId);
@@ -91,13 +92,20 @@ public class PizzaController : ControllerBase
     [HttpPut("{id}/sauce/{sauceId}")]
     public IActionResult UpdateSauce(int id, int sauceId)
     {
-        var existingPizza = PizzaService.GetById(id);
+        var existingPizza = service.GetById(id);
         if (existingPizza is null)
             return NotFound();
-        PizzaService.UpdateSauce(id: id, sauceId: sauceId);
+        service.UpdateSauce(id: id, sauceId: sauceId);
         return NoContent();
     }
 
+     /// <summary>
+     /// Gets all sauces of a pizza
+     /// </summary>
+     /// <returns></returns>
+    [Produces("application/json")]
+    [HttpGet("/sauce")]
+    public ActionResult<List<Sauce>> GetAllSauce() => service.GetAllSauce();
 
     /// <summary>
     /// Deletes a pizza
@@ -107,11 +115,11 @@ public class PizzaController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult DeletePizza(int id)
     {
-        var existingPizza = PizzaService.GetById(id);
+        var existingPizza = service.GetById(id);
         if (existingPizza is null)
             return NotFound();
 
-        PizzaService.DeletePizza(id);
+        service.DeleteById(id);
 
         return NoContent();
     }

@@ -7,7 +7,7 @@ namespace contosopizza.Data;
 /// Pizza context
 /// </summary>
 /// <param name="options"></param>
-public class PizzaContext(DbContextOptions options) : DbContext(options)
+public class PizzaContext(DbContextOptions<PizzaContext> options) : DbContext(options)
 {
 
     public DbSet<Pizza> Pizzas => Set<Pizza>();
