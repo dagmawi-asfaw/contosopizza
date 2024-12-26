@@ -1,5 +1,7 @@
 using contosopizza.Models;
+using contosopizza.Queries.PizzaQuery;
 using contosopizza.Service;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace contosopizza.Controllers;
@@ -9,9 +11,12 @@ namespace contosopizza.Controllers;
 public class PizzaController : ControllerBase
 {
     private readonly PizzaService service;
-    public PizzaController(PizzaService pizzaService)
+
+    private readonly ISender _sender;
+    public PizzaController(PizzaService pizzaService, ISender sender)
     {
         service = pizzaService;
+        _sender = sender;
     }
 
     /// <summary>
@@ -19,7 +24,14 @@ public class PizzaController : ControllerBase
     /// </summary>
     [Produces("application/json")]
     [HttpGet]
-    public ActionResult<List<Pizza>> GetAll() => service.GetAll();
+    public async Task<ActionResult<IEnumerable<Pizza>>> GetAll()
+    {
+        //add mediator send here
+        var pizzas = await _sender.Send(new GetAllPizzasQuery());
+
+        return Ok(pizzas);
+
+    }
 
     /// <summary>
     /// Gets one pizza by id
@@ -99,10 +111,10 @@ public class PizzaController : ControllerBase
         return NoContent();
     }
 
-     /// <summary>
-     /// Gets all sauces of a pizza
-     /// </summary>
-     /// <returns></returns>
+    /// <summary>
+    /// Gets all sauces of a pizza
+    /// </summary>
+    /// <returns></returns>
     [Produces("application/json")]
     [HttpGet("/sauce")]
     public ActionResult<List<Sauce>> GetAllSauce() => service.GetAllSauce();

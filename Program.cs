@@ -3,12 +3,15 @@ using Microsoft.OpenApi.Models;
 using contosopizza.Data;
 using contosopizza.Service;
 using contosopizza.data;
+using Microsoft.AspNetCore.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddSqlite<PizzaContext>("Data Source=ContosoPizza.db");
 builder.Services.AddSqlite<PromotionsContext>("Data Source=promotions/Promotions.db");
+
+builder.Services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
