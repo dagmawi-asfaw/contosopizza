@@ -7,17 +7,14 @@ using Microsoft.EntityFrameworkCore;
 namespace contosopizza.Handlers.PizzaHandlers;
 
 
-public class PizzaHandler : IRequestHandler<GetAllPizzasQuery, IEnumerable<Pizza>>
+public class GetAllPizzasHandler : IRequestHandler<GetAllPizzasQuery, IEnumerable<Pizza>>
 {
-    private readonly PizzaContext pContext;
+    private readonly PizzaContext pizzaContext;
 
-    public PizzaHandler(PizzaContext context)
+    public GetAllPizzasHandler(PizzaContext context)
     {
-        this.pContext = context;
+        this.pizzaContext = context;
     }
     public async Task<IEnumerable<Pizza>> Handle(GetAllPizzasQuery request, CancellationToken cancellationToken)
-    {
-        return pContext.Pizzas.AsNoTracking().ToList<Pizza>();
-
-    }
+    => pizzaContext.Pizzas.AsNoTracking().ToList<Pizza>();
 }

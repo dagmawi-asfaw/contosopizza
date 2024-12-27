@@ -23,14 +23,12 @@ public class PizzaController : ControllerBase
     /// Gets all pizzas
     /// </summary>
     [Produces("application/json")]
+    [ProducesResponseType(typeof(List<Pizza>), 200)]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Pizza>>> GetAll()
     {
-        //add mediator send here
         var pizzas = await _sender.Send(new GetAllPizzasQuery());
-
-        return Ok(pizzas);
-
+        return new OkObjectResult(pizzas);
     }
 
     /// <summary>
@@ -38,13 +36,14 @@ public class PizzaController : ControllerBase
     /// </summary>
     /// <param name="id"/>
     [Produces("application/json")]
+    [ProducesResponseType(typeof(BadRequestResult), 200)]
+    [ProducesResponseType(typeof(Pizza), 200)]
     [HttpGet("{id}")]
-    public ActionResult<Pizza?> GetById(int id)
+    public async Task<IActionResult> GetById(int id)
     {
-        var pizza = service.GetById(id);
-        if (pizza is null)
-            return NotFound();
-        return pizza;
+
+        var result = await _sender.Send(new GetOnePizzaQuery(id));
+        return result;
     }
     /// <summary>
     /// Creates a new pizza
@@ -116,6 +115,7 @@ public class PizzaController : ControllerBase
     /// </summary>
     /// <returns></returns>
     [Produces("application/json")]
+    [ProducesResponseType(typeof(List<Sauce>), 200)]
     [HttpGet("/sauce")]
     public ActionResult<List<Sauce>> GetAllSauce() => service.GetAllSauce();
 
