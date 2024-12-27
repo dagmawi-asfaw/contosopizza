@@ -2,6 +2,7 @@ using contosopizza.Commands.PizzaCommands;
 using contosopizza.Data;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace contosopizza.Handlers.PizzaHandlers.CommandHandlers;
 
@@ -15,12 +16,18 @@ public class AddToppingToPizzaHandler : IRequestHandler<AddToppingToPizzaCommand
     }
     public async Task<IActionResult> Handle(AddToppingToPizzaCommand request, CancellationToken cancellationToken)
     {
-        var pizzaToUpdate = pizzaContext.Pizzas.Where(p => p.Id == request.pizzaId).SingleOrDefault();
-        var toppingToAdd = pizzaContext.Toppings.Where(t => t.Id == request.toppingId).SingleOrDefault();
+        var pizzaToUpdate = pizzaContext.Pizzas.Include("Toppings").FirstOrDefault(p => p.Id == request.pizzaId);
+        var toppingToAdd = pizzaContext.Toppings.FirstOrDefault(t => t.Id == request.toppingId);
+
         if (pizzaToUpdate == null || toppingToAdd == null)
             return new NotFoundResult();
-        pizzaContext.Toppings.Add(toppingToAdd);
-        pizzaContext.SaveChanges();
-        return new OkResult();
-    }   
+        var toppingExists = pizzaToUpdate.Toppings.FirstOrDefault(t => t.Id == toppingToAdd.Id);
+        if (toppingExists is null)
+        {
+            pizzaToUpdate.Toppings.Add(toppingToAdd);
+            pizzaContext.SaveChanges();
+            return new OkObjectResult(pizzaToUpdate);
+        }
+        return new OkObjectResult("Topping already exists on pizza");
+    }
 }

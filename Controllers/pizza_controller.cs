@@ -98,11 +98,11 @@ public class PizzaController : ControllerBase
     /// <param name="sauceId"/>
     [Produces("application/json")]
     [HttpPut("{id}/sauce/{sauceId}")]
-    public IActionResult UpdateSauce(int id, int sauceId)
+    public async Task<IActionResult> UpdateSauce(int id, int sauceId)
     {
 
-        _sender.Send(new UpdateSauceCommand(id, sauceId));
-        return new OkResult();
+        var result = await _sender.Send(new UpdateSauceCommand(id, sauceId));
+        return new OkObjectResult(result);
     }
 
     /// <summary>
@@ -124,6 +124,6 @@ public class PizzaController : ControllerBase
     /// <param name="id"/>
     [Produces("application/json")]
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeletePizza(int id) => (IActionResult)_sender.Send(new DeletePizzaCommand(id));
+    public async Task<IActionResult> DeletePizza(int id) => await _sender.Send(new DeletePizzaCommand(id));
 
 }

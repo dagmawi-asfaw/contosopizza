@@ -16,5 +16,5 @@ public class GetAllPizzasHandler : IRequestHandler<GetAllPizzasQuery, IEnumerabl
         this.pizzaContext = context;
     }
     public async Task<IEnumerable<Pizza>> Handle(GetAllPizzasQuery request, CancellationToken cancellationToken)
-    => pizzaContext.Pizzas.AsNoTracking().ToList<Pizza>();
+    => pizzaContext.Pizzas.Include("Sauce").Include("Toppings").AsNoTracking().ToList<Pizza>();
 }

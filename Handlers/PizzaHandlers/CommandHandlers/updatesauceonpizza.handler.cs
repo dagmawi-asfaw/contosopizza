@@ -22,6 +22,6 @@ public class UpdateSauceHandler : IRequestHandler<UpdateSauceCommand, IActionRes
 
         pizzaToUpdate.Sauce = sauceToUpdate;
         pizzaContext.SaveChanges();
-        return new OkResult();
+        return new OkObjectResult(pizzaToUpdate);
     }
 }
