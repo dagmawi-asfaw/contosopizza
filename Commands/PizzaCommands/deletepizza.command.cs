@@ -5,4 +5,4 @@ using Microsoft.AspNetCore.Mvc;
 namespace contosopizza.Commands.PizzaCommands;
 
 
-public record UpdateSauceCommand(int pizzaId, int sauceId): IRequest<IActionResult>;
+public record DeletePizzaCommand(int pizzaId): IRequest<IActionResult>;

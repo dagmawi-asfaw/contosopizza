@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace contosopizza.Handlers.PizzaHandlers;
+namespace contosopizza.Handlers.PizzaHandlers.QueryHandlers;
 
 public class GetAllSaucesHandler : IRequestHandler<GetAllSaucesQuery, IEnumerable<Sauce>>
 {

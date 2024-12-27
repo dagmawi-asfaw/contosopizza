@@ -4,7 +4,7 @@ using contosopizza.Queries.PizzaQuery;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace contosopizza.Handlers.PizzaHandlers;
+namespace contosopizza.Handlers.PizzaHandlers.QueryHandlers;
 
 
 public class GetAllPizzasHandler : IRequestHandler<GetAllPizzasQuery, IEnumerable<Pizza>>

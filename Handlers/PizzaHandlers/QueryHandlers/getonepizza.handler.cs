@@ -1,4 +1,4 @@
-using contosopizza.Handlers.PizzaHandlers;
+using contosopizza.Handlers.PizzaHandlers.QueryHandlers;
 using contosopizza.Queries.PizzaQuery;
 using contosopizza.Models;
 using MediatR;

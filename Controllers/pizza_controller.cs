@@ -1,3 +1,4 @@
+using contosopizza.Commands.PizzaCommands;
 using contosopizza.Models;
 using contosopizza.Queries.PizzaQuery;
 using contosopizza.Service;
@@ -10,13 +11,13 @@ namespace contosopizza.Controllers;
 [Route("[Controller]")]
 public class PizzaController : ControllerBase
 {
-    private readonly PizzaService service;
 
     private readonly ISender _sender;
-    public PizzaController(PizzaService pizzaService, ISender sender)
+    // private readonly IPublisher _publisher;
+    public PizzaController(ISender sender)
     {
-        service = pizzaService;
         _sender = sender;
+        //     _publisher = publisher;
     }
 
     /// <summary>
@@ -50,31 +51,29 @@ public class PizzaController : ControllerBase
     /// </summary>
     /// <param name="pizza"/>
     [Produces("application/json")]
+    [ProducesResponseType(typeof(Pizza), 200)]
     [HttpPost]
     public IActionResult Create(Pizza pizza)
     {
-        service.Create(pizza);
-        return CreatedAtAction(nameof(GetById), new { id = pizza.Id }, pizza);
-        // return CreatedAtAction("create pizza", pizza);
+
+        var result = _sender.Send(new AddPizzaCommand(pizza));
+
+        return Ok(result);
+
     }
 
     /// <summary>
     /// Updates a pizza by id
     /// </summary>
-    /// <param name="id"/>
     /// <param name="pizza"/>
     [Produces("application/json")]
     [HttpPut("{id}")]
-    public IActionResult Update(int id, Pizza pizza)
+    public IActionResult Update(Pizza pizza)
     {
-        if (pizza.Id != id)
-            return BadRequest();
+        var result = _sender.Send(new UpdatePizzaCommand(pizza));
 
-        var existingPizza = service.GetById(pizza.Id);
-        if (existingPizza is null)
-            return NotFound();
-        PizzaService.UpdatePizza(pizza);
-        return NoContent();
+        return Ok(result);
+
     }
 
     /// <summary>
@@ -84,13 +83,11 @@ public class PizzaController : ControllerBase
     /// <param name="toppingId"/>
     [Produces("application/json")]
     [HttpPut("{id}/topping/{toppingId}")]
-    public IActionResult AddTopping(int id, int toppingId)
+    public async Task<IActionResult> AddToppingToPizza(int id, int toppingId)
     {
-        var existingPizza = service.GetById(id);
-        if (existingPizza is null)
-            return NotFound();
-        //   PizzaService.AddTopping(id: id, toppingId: toppingId);
-        return NoContent();
+        var result = await _sender.Send(new AddToppingToPizzaCommand(id, toppingId));
+
+        return result;
 
     }
 
@@ -103,11 +100,9 @@ public class PizzaController : ControllerBase
     [HttpPut("{id}/sauce/{sauceId}")]
     public IActionResult UpdateSauce(int id, int sauceId)
     {
-        var existingPizza = service.GetById(id);
-        if (existingPizza is null)
-            return NotFound();
-        service.UpdateSauce(id: id, sauceId: sauceId);
-        return NoContent();
+
+        _sender.Send(new UpdateSauceCommand(id, sauceId));
+        return new OkResult();
     }
 
     /// <summary>
@@ -117,7 +112,11 @@ public class PizzaController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(typeof(List<Sauce>), 200)]
     [HttpGet("/sauce")]
-    public ActionResult<List<Sauce>> GetAllSauce() => service.GetAllSauce();
+    public ActionResult<List<Sauce>> GetAllSauce()
+    {
+        var result = _sender.Send(new GetAllSaucesQuery());
+        return new OkObjectResult(result);
+    }
 
     /// <summary>
     /// Deletes a pizza
@@ -125,15 +124,6 @@ public class PizzaController : ControllerBase
     /// <param name="id"/>
     [Produces("application/json")]
     [HttpDelete("{id}")]
-    public IActionResult DeletePizza(int id)
-    {
-        var existingPizza = service.GetById(id);
-        if (existingPizza is null)
-            return NotFound();
-
-        service.DeleteById(id);
-
-        return NoContent();
-    }
+    public async Task<IActionResult> DeletePizza(int id) => (IActionResult)_sender.Send(new DeletePizzaCommand(id));
 
 }
